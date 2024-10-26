@@ -24,8 +24,10 @@ const chatLog = document.getElementById("chat-log");
 const userSearchInput = document.getElementById("user-search");
 const searchButton = document.getElementById("search-button");
 const searchResults = document.getElementById("search-results");
+const selectedUserDisplay = document.querySelector(".selected-user"); // Display for the selected user
 
 let selectedUserId = null; // Store the selected user's ID
+let selectedUsername = null; // Store the selected user's name
 let currentUser = null; // Store the current authenticated user
 
 // Ensure user is authenticated
@@ -41,17 +43,20 @@ onAuthStateChanged(auth, (user) => {
 function loadChatMessages(selectedUserId) {
     if (!currentUser || !selectedUserId) return;
 
+    // Query to get messages between the current user and the selected user
     const q = query(
         collection(db, "chats"),
         where("participants", "array-contains", currentUser.uid),
         orderBy("timestamp", "asc")
     );
 
+    // Real-time listener to load and display messages
     onSnapshot(q, (querySnapshot) => {
         chatLog.innerHTML = ""; // Clear chat log
 
         querySnapshot.forEach((doc) => {
             const message = doc.data();
+            // Display only messages exchanged between the current user and selected user
             if ((message.senderId === currentUser.uid && message.recipientId === selectedUserId) ||
                 (message.senderId === selectedUserId && message.recipientId === currentUser.uid)) {
                 displayMessage(message);
@@ -103,10 +108,26 @@ messageForm.addEventListener("submit", async (event) => {
     }
 });
 
-// Search for users and display results
+// Update UI when a user is selected for chat
+function selectUserForChat(docId, username) {
+    selectedUserId = docId;
+    selectedUsername = username;
+    chatLog.innerHTML = ""; // Clear previous messages
+
+    // Show selected user at the top of the chat area
+    selectedUserDisplay.textContent = `Chatting with ${selectedUsername}`;
+    
+    // Clear search results and hide search area
+    searchResults.innerHTML = "";
+    userSearchInput.value = "";
+    
+    loadChatMessages(selectedUserId); // Load chat messages for this user
+}
+
+// Search functionality with click event for each search result
 searchButton.addEventListener("click", async () => {
     const searchQuery = userSearchInput.value.trim().toLowerCase();
-    searchResults.innerHTML = ""; // Clear previous results
+    searchResults.innerHTML = "";
 
     if (!searchQuery) {
         searchResults.innerHTML = "<p>Please enter a search term.</p>";
@@ -128,25 +149,17 @@ searchButton.addEventListener("click", async () => {
             const profile = doc.data();
             const resultItem = document.createElement("div");
             resultItem.classList.add("search-result-item");
-
-            const profileImg = document.createElement("img");
-            profileImg.src = profile.photoURL || "default-icon.png";
-            profileImg.alt = profile.username;
-
-            const username = document.createElement("span");
-            username.classList.add("username");
-            username.textContent = profile.username;
-
-            resultItem.appendChild(profileImg);
-            resultItem.appendChild(username);
-            searchResults.appendChild(resultItem);
+            resultItem.textContent = profile.username;
 
             // Click event to select a user for chat
-            resultItem.addEventListener("click", () => {
-                selectedUserId = doc.id; // Set the selected user's ID
-                chatLog.innerHTML = ""; // Clear chat log for new conversation
-                loadChatMessages(selectedUserId); // Load chat messages for this user
-            });
+            resultItem.addEventListener("click", () => selectUserForChat(doc.id, profile.username));
+
+            searchResults.appendChild(resultItem);
         });
     }
+});
+
+// Event listener for settings button
+document.getElementById("settings-button").addEventListener("click", () => {
+    window.location.href = "settings.html";
 });
