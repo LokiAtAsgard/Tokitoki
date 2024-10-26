@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs, doc, onSnapshot, addDoc, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -34,13 +34,15 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// Add Settings button functionality
+// Settings button
 document.getElementById("settings-button").addEventListener("click", () => {
     window.location.href = "settings.html";
 });
 
-// Load Chat Messages
+// Load Chat Messages for Selected User
 function loadChatMessages(userId) {
+    if (!selectedUserId) return;
+
     const q = query(
         collection(db, "chats"),
         where("recipientId", "in", [userId, selectedUserId]),
@@ -52,13 +54,13 @@ function loadChatMessages(userId) {
         chatLog.innerHTML = "";  // Clear chat log
         querySnapshot.forEach((doc) => {
             const message = doc.data();
-            displayMessage(message);
+            displayMessage(message, userId);
         });
     });
 }
 
 // Display Message in Chat Log
-function displayMessage(message) {
+function displayMessage(message, userId) {
     const messageElement = document.createElement("div");
     messageElement.classList.add("message");
 
@@ -66,20 +68,22 @@ function displayMessage(message) {
     iconElement.classList.add("user-icon");
     iconElement.src = message.userIcon || "default-icon.png";
 
-    const usernameElement = document.createElement("span");
-    usernameElement.classList.add("username");
-    usernameElement.textContent = message.username;
-
     const textElement = document.createElement("span");
     textElement.classList.add("text");
     textElement.textContent = message.text;
 
-    messageElement.appendChild(iconElement);
-    messageElement.appendChild(usernameElement);
+    // Align message to the left or right based on sender
+    if (message.senderId === userId) {
+        messageElement.classList.add("right"); // Right-aligned for the current user's messages
+    } else {
+        messageElement.classList.add("left"); // Left-aligned for the recipient's messages
+        messageElement.appendChild(iconElement); // Display the icon for the other user
+    }
+
     messageElement.appendChild(textElement);
     chatLog.appendChild(messageElement);
 
-    chatLog.scrollTop = chatLog.scrollHeight;
+    chatLog.scrollTop = chatLog.scrollHeight; // Auto-scroll to the latest message
 }
 
 // Send Message
@@ -109,20 +113,20 @@ async function sendMessage(event, user) {
 searchButton.addEventListener("click", performUserSearch);
 
 async function performUserSearch() {
-    const searchQuery = userSearchInput.value.trim();
+    const searchQuery = userSearchInput.value.trim().toLowerCase();
     searchResults.innerHTML = ""; // Clear previous results
 
     if (searchQuery) {
         try {
             const profilesRef = collection(db, "profiles");
             const q = query(
-                profilesRef, 
+                profilesRef,
                 where("username", ">=", searchQuery),
                 where("username", "<=", searchQuery + "\uf8ff")
             );
 
             const querySnapshot = await getDocs(q);
-            
+
             if (querySnapshot.empty) {
                 searchResults.innerHTML = "<p>No users found</p>";
             } else {
@@ -135,7 +139,7 @@ async function performUserSearch() {
                     const profileImg = document.createElement("img");
                     profileImg.src = profile.photoURL || "default-icon.png";
                     profileImg.alt = profile.username;
-                    
+
                     // Display username
                     const username = document.createElement("span");
                     username.classList.add("username");
@@ -147,7 +151,9 @@ async function performUserSearch() {
 
                     // Click event to initiate chat
                     resultItem.addEventListener("click", () => {
-                        initiateChatWithUser(doc.id, profile.username, profile.photoURL);
+                        selectedUserId = doc.id; // Set the selected user's ID
+                        chatLog.innerHTML = ""; // Clear chat log for new conversation
+                        loadChatMessages(auth.currentUser.uid); // Load messages with the selected user
                     });
                 });
             }
@@ -158,11 +164,4 @@ async function performUserSearch() {
     } else {
         searchResults.innerHTML = "<p>Please enter a search term.</p>";
     }
-}
-
-// Select a User to Chat With
-function initiateChatWithUser(userId, username, photoURL) {
-    selectedUserId = userId; // Store the selected user's ID
-    chatLog.innerHTML = ""; // Clear chat log for new conversation
-    loadChatMessages(auth.currentUser.uid); // Load messages with the selected user
 }
