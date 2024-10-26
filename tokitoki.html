@@ -2,29 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Chat Application</title>
+    <title>Tokitoki Chat Application</title>
     <link rel="stylesheet" href="tokitoki.css">
     <script type="module" src="tokitoki.js" defer></script>
 </head>
 <body>
-    <div class="header">
-        <button id="settings-button">Settings</button>
-    </div>
-    <div class="chat-container">
+    <div class="main-container">
+        <!-- Search Bar for finding users -->
         <div class="search-bar">
             <input type="text" id="user-search" placeholder="Search for users..." />
-            <button id="search-button">Search</button> <!-- Corrected search button ID -->
+            <button id="search-button">Search</button>
         </div>
-        
-        <!-- Search Results Container -->
-        <div id="search-results" class="search-results"></div>
-        
-        <div id="chat-log" class="chat-box"></div>
-        
-        <form id="message-form">
-            <input type="text" id="message-input" placeholder="Type a message" required>
-            <button type="submit">Send</button>
-        </form>
+
+        <!-- Chat Container with selected user display and chat log -->
+        <div class="chat-container">
+            <div id="selected-user" class="selected-user">Select a user to chat with</div>
+            <div id="search-results" class="search-results"></div>
+            <div id="chat-log" class="chat-box"></div>
+
+            <!-- Message input form -->
+            <form id="message-form">
+                <input type="text" id="message-input" placeholder="Type a message" required>
+                <button type="submit">Send</button>
+            </form>
+
+            <!-- Settings button to navigate to settings page -->
+            <button id="settings-button">Settings</button>
+        </div>
     </div>
 </body>
 </html>

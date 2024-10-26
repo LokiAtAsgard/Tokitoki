@@ -1,7 +1,26 @@
-/* Chat container layout adjustments */
+/* General page layout */
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f5;
+}
+
+/* Main container for the chat */
+.main-container {
+    max-width: 600px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Chat container */
 .chat-container {
     position: relative;
-    max-width: 600px;
+    width: 100%;
     height: 80vh;
     display: flex;
     flex-direction: column;
@@ -10,22 +29,9 @@
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    padding-bottom: 50px; /* Add space at the bottom for the settings button */
 }
 
-
-/* Chat box styling */
-.chat-box {
-    flex-grow: 1;
-    overflow-y: auto;
-    background-color: #ffffff;
-    padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px; /* Adds space between chat box and input */
-}
-
-/* Styling for selected chat user at the top */
+/* Selected user display section */
 .selected-user {
     padding: 10px;
     background-color: #f5f5f5;
@@ -33,6 +39,15 @@
     text-align: center;
     border-bottom: 1px solid #ddd;
     font-size: 1.2em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.selected-user img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
 }
 
 /* Search results styling */
@@ -42,37 +57,36 @@
     background-color: #ffffff;
     border: 1px solid #ddd;
     border-radius: 5px;
-    z-index: 10;
-    position: absolute;
+    margin-top: 10px;
     width: 100%;
 }
 
-/* Input area styling for message form */
-#message-form {
+.search-result-item {
     display: flex;
-    gap: 10px;
-}
-
-#message-input {
-    flex-grow: 1;
+    align-items: center;
     padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-
-#message-form button {
-    padding: 10px;
-    border-radius: 4px;
-    background-color: #007bff;
-    color: white;
-    border: none;
     cursor: pointer;
+    border-bottom: 1px solid #eee;
 }
 
-#message-form button:hover {
-    background-color: #0056b3;
+.search-result-item img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
 }
 
+/* Chat log section styling */
+.chat-box {
+    flex-grow: 1;
+    overflow-y: auto;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* Settings button styling */
 #settings-button {
     position: absolute;
     bottom: 10px;
@@ -85,7 +99,26 @@
     cursor: pointer;
 }
 
-
 #settings-button:hover {
     background-color: #0056b3;
+}
+
+/* Left and right message styling */
+.message.left {
+    align-self: flex-start;
+    background-color: #e0e0e0;
+    padding: 10px;
+    border-radius: 10px 10px 10px 0;
+    margin-bottom: 5px;
+    max-width: 60%;
+}
+
+.message.right {
+    align-self: flex-end;
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border-radius: 10px 10px 0 10px;
+    margin-bottom: 5px;
+    max-width: 60%;
 }
