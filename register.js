@@ -30,6 +30,7 @@ async function createProfile(user) {
     await setDoc(doc(db, "profiles", user.uid), userProfile);
 }
 
+
 // Sign in with Google and create profile if successful
 window.signInWithGoogle = function () {
   signInWithPopup(auth, provider)

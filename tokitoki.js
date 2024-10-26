@@ -115,7 +115,11 @@ async function performUserSearch() {
     if (searchQuery) {
         try {
             const profilesRef = collection(db, "profiles");
-            const q = query(profilesRef, where("username", ">=", searchQuery), where("username", "<=", searchQuery + "\uf8ff"));
+            const q = query(
+                profilesRef, 
+                where("username", ">=", searchQuery),
+                where("username", "<=", searchQuery + "\uf8ff")
+            );
 
             const querySnapshot = await getDocs(q);
             
