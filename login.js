@@ -12,23 +12,10 @@ const firebaseConfig = {
   appId: "1:41928173902:web:54ca9cc87f3fa8c3b0961f"
 };
 
-// Initialize Firebase only once
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-
-// Helper function to handle errors
-function handleError(error) {
-  let message;
-  switch (error.code) {
-    case "auth/invalid-email": message = "Invalid email format"; break;
-    case "auth/user-not-found": message = "No account found for this email."; break;
-    case "auth/wrong-password": message = "Incorrect password"; break;
-    case "auth/email-already-in-use": message = "Email already used"; break;
-    default: message = error.message;
-  }
-  alert(message);
-}
 
 // Email and password login
 function loginWithEmail(event) {
@@ -38,29 +25,30 @@ function loginWithEmail(event) {
 
   signInWithEmailAndPassword(auth, email, password)
     .then(() => {
-      console.log("Login successful, redirecting...");
       window.location.href = "tokitoki.html";
     })
     .catch(handleError);
 }
 
-// Google sign-in login
+// Google Sign-In
 function loginWithGoogle(event) {
   event.preventDefault();
 
   signInWithPopup(auth, provider)
     .then(() => {
-      console.log("Google sign-in successful, redirecting...");
       window.location.href = "tokitoki.html";
     })
     .catch(handleError);
 }
 
-// Ensure elements are available and add event listeners
+// Attach event listeners
 document.addEventListener("DOMContentLoaded", () => {
-  const submitBtn = document.getElementById('submit');
-  const googleBtn = document.getElementById('google');
-
-  if (submitBtn) submitBtn.addEventListener("click", loginWithEmail);
-  if (googleBtn) googleBtn.addEventListener("click", loginWithGoogle);
+  document.getElementById('submit').addEventListener("click", loginWithEmail);
+  document.getElementById('google').addEventListener("click", loginWithGoogle);
 });
+
+// Error handler
+function handleError(error) {
+  console.error("Error:", error.message);
+  alert(error.message);
+}
