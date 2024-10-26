@@ -41,20 +41,17 @@ onAuthStateChanged(auth, (user) => {
 function loadChatMessages(selectedUserId) {
     if (!currentUser || !selectedUserId) return;
 
-    // Query to get messages between the current user and the selected user
     const q = query(
         collection(db, "chats"),
         where("participants", "array-contains", currentUser.uid),
         orderBy("timestamp", "asc")
     );
 
-    // Real-time listener to load and display messages
     onSnapshot(q, (querySnapshot) => {
         chatLog.innerHTML = ""; // Clear chat log
 
         querySnapshot.forEach((doc) => {
             const message = doc.data();
-            // Display only messages exchanged between the current user and selected user
             if ((message.senderId === currentUser.uid && message.recipientId === selectedUserId) ||
                 (message.senderId === selectedUserId && message.recipientId === currentUser.uid)) {
                 displayMessage(message);
@@ -75,7 +72,6 @@ function displayMessage(message) {
     textElement.classList.add("text");
     textElement.textContent = message.text;
 
-    // Align message based on sender
     if (message.senderId === currentUser.uid) {
         messageElement.classList.add("right"); // Right-align current user's messages
     } else {
@@ -96,7 +92,7 @@ messageForm.addEventListener("submit", async (event) => {
         timestamp: serverTimestamp(),
         senderId: currentUser.uid,
         recipientId: selectedUserId,
-        participants: [currentUser.uid, selectedUserId] // Used to fetch only relevant messages
+        participants: [currentUser.uid, selectedUserId]
     };
 
     try {
