@@ -1,3 +1,5 @@
+// tokitoki.js
+
 // Import Firebase dependencies
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
@@ -35,9 +37,9 @@ let unsubscribeFromChat = null;
 onAuthStateChanged(auth, (user) => {
     if (user) {
         currentUserId = user.uid;
-        console.log("User authenticated with ID:", currentUserId);
+        console.log("Authenticated as:", currentUserId);
     } else {
-        window.location.href = "index.html";
+        window.location.href = "index.html"; // Redirect to login if not signed in
     }
 });
 
@@ -46,7 +48,7 @@ document.getElementById("settings-button").addEventListener("click", () => {
     window.location.href = "settings.html";
 });
 
-// Search Functionality
+// Search for Users
 searchButton.addEventListener("click", async () => {
     const searchQuery = userSearchInput.value.trim().toLowerCase();
     searchResults.innerHTML = "";
@@ -59,35 +61,45 @@ searchButton.addEventListener("click", async () => {
             where("username", "<=", searchQuery + "\uf8ff")
         );
 
-        const querySnapshot = await getDocs(q);
+        try {
+            const querySnapshot = await getDocs(q);
 
-        querySnapshot.forEach((doc) => {
-            const profile = doc.data();
-            const resultItem = document.createElement("div");
-            resultItem.classList.add("search-result-item");
+            querySnapshot.forEach((doc) => {
+                const profile = doc.data();
+                const resultItem = document.createElement("div");
+                resultItem.classList.add("search-result-item");
 
-            const profileImg = document.createElement("img");
-            profileImg.src = profile.photoURL || "default-icon.png";
-            profileImg.alt = profile.username;
-            profileImg.classList.add("small-icon");
+                const profileImg = document.createElement("img");
+                profileImg.src = profile.photoURL || "default-icon.png";
+                profileImg.alt = profile.username;
+                profileImg.classList.add("small-icon");
 
-            const username = document.createElement("span");
-            username.classList.add("username");
-            username.textContent = profile.username;
+                const username = document.createElement("span");
+                username.classList.add("username");
+                username.textContent = profile.username;
 
-            resultItem.appendChild(profileImg);
-            resultItem.appendChild(username);
-            searchResults.appendChild(resultItem);
+                resultItem.appendChild(profileImg);
+                resultItem.appendChild(username);
+                searchResults.appendChild(resultItem);
 
-            resultItem.addEventListener("click", () => {
-                selectedUserId = doc.id;
-                selectedUserDisplay.innerHTML = `<img src="${profile.photoURL || 'default-icon.png'}" alt="${profile.username}" class="small-icon"> ${profile.username}`;
-                chatLog.innerHTML = ""; 
-                loadChatMessages(); 
+                resultItem.addEventListener("click", () => {
+                    selectedUserId = doc.id;
+                    selectedUserDisplay.innerHTML = `<img src="${profile.photoURL || 'default-icon.png'}" alt="${profile.username}" class="small-icon"> ${profile.username}`;
+                    chatLog.innerHTML = ""; // Clear previous chat
+                    loadChatMessages(); // Load chat for selected user
+                });
             });
-        });
+
+            if (querySnapshot.empty) {
+                searchResults.innerHTML = "<p>No users found</p>";
+            }
+
+        } catch (error) {
+            console.error("Error fetching users:", error);
+            searchResults.innerHTML = "<p>Error loading search results</p>";
+        }
     } else {
-        searchResults.innerHTML = "<p>No users found</p>";
+        searchResults.innerHTML = "<p>Please enter a search query</p>";
     }
 });
 
@@ -95,7 +107,8 @@ searchButton.addEventListener("click", async () => {
 function loadChatMessages() {
     if (!selectedUserId) return;
 
-    if (unsubscribeFromChat) unsubscribeFromChat();
+    // Unsubscribe from any previous listener to prevent duplicate listeners
+    if (unsubscribeFromChat) unsubscribeFromChat(); 
 
     const q = query(
         collection(db, "chats"),
@@ -104,6 +117,7 @@ function loadChatMessages() {
         orderBy("timestamp", "asc")
     );
 
+    // Real-time listener for the chat between the selected user and the current user
     unsubscribeFromChat = onSnapshot(q, (snapshot) => {
         chatLog.innerHTML = ""; 
         snapshot.forEach((doc) => {
@@ -118,6 +132,7 @@ function displayMessage(message) {
     const messageElement = document.createElement("div");
     messageElement.classList.add("message");
 
+    // Align message to the right if sent by the current user, left if received
     if (message.senderId === currentUserId) {
         messageElement.classList.add("right");
     } else {
@@ -126,7 +141,7 @@ function displayMessage(message) {
 
     messageElement.textContent = message.text;
     chatLog.appendChild(messageElement);
-    chatLog.scrollTop = chatLog.scrollHeight; 
+    chatLog.scrollTop = chatLog.scrollHeight; // Auto-scroll to the latest message
 }
 
 // Send Message
@@ -142,7 +157,8 @@ messageForm.addEventListener("submit", async (event) => {
             userIcon: auth.currentUser.photoURL || "default-icon.png"
         };
 
+        // Add message to the Firestore collection
         await addDoc(collection(db, "chats"), message);
-        messageInput.value = ""; 
+        messageInput.value = ""; // Clear the message input after sending
     }
 });
