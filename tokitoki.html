@@ -2,32 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Tokitoki Chat Application</title>
+    <title>Tokitoki Group Chat</title>
     <link rel="stylesheet" href="tokitoki.css">
     <script type="module" src="tokitoki.js" defer></script>
 </head>
 <body>
-    <div class="main-container">
-        <!-- Search Bar for finding users -->
-        <div class="search-bar">
-            <input type="text" id="user-search" placeholder="Search for users..." />
-            <button id="search-button">Search</button>
-        </div>
-
-        <!-- Chat Container with selected user display and chat log -->
+    <div class="container">
+        <h2>Tokitoki Group Chat</h2>
         <div class="chat-container">
-            <div id="selected-user" class="selected-user">Select a user to chat with</div>
-            <div id="search-results" class="search-results"></div>
             <div id="chat-log" class="chat-box"></div>
 
-            <!-- Message input form -->
-            <form id="message-form">
-                <input type="text" id="message-input" placeholder="Type a message" required>
+            <form id="message-form" class="message-form">
+                <input type="text" id="message-input" placeholder="Type a message..." required />
                 <button type="submit">Send</button>
             </form>
 
-            <!-- Settings button to navigate to settings page -->
-            <button id="settings-button">Settings</button>
+            <!-- New buttons at the bottom -->
+            <button id="edit-username">Edit Username</button>
+            <button id="logout-button">Log Out</button>
         </div>
     </div>
 </body>
