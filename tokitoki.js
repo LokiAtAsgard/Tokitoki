@@ -53,11 +53,15 @@ function displayMessage(message) {
     const messageElement = document.createElement("div");
     messageElement.classList.add("message");
 
-    // Align the message depending on the sender
+    // Set message alignment and color based on senderId
     if (message.senderId === currentUser.uid) {
         messageElement.classList.add("right");  // Right align for the current user's messages
+        messageElement.style.backgroundColor = "#007bff";  // Color for current user's messages
+        messageElement.style.color = "white";
     } else {
         messageElement.classList.add("left");   // Left align for other users' messages
+        messageElement.style.backgroundColor = "#e0e0e0";  // Color for other users' messages
+        messageElement.style.color = "black";
     }
 
     // Display sender's name above the message text
