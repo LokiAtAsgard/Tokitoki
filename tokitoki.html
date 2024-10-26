@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Application</title>
+    <link rel="stylesheet" href="tokitoki.css">
+    <script type="module" src="tokitoki.js" defer></script>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="search-bar">
+            <input type="text" id="user-search" placeholder="Search for users..." />
+            <button id="search-button">Search</button>
+        </div>
+        <div id="search-results"></div>
+        
+        <div id="chat-log" class="chat-box"></div>
+        
+        <form id="message-form">
+            <input type="text" id="message-input" placeholder="Type a message" required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+</body>
+</html>

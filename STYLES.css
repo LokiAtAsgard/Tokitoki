@@ -1,0 +1,115 @@
+
+
+body {
+    background-image: url(https://images.pexels.com/photos/531756/pexels-photo-531756.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2);
+    background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	height: 100vh;
+	padding: 0;
+	overflow: hidden;
+
+
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.content {
+    width: 90%;
+    max-width: 400px;
+    padding: 20px;
+    background-color: azure;
+  
+    border-radius: 10px; 
+    box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.2);
+
+}
+
+h4{
+	font-size: 2rem;
+	font-weight: 5;
+	text-align: center;
+	padding: 0;
+	margin: 10px;
+	margin-top: 0;
+}
+h3 {
+	font-size: 1.3rem;
+	font-weight: 5;
+	text-align: left;
+	padding: 0;
+	margin: 10px;
+	margin-top: 0;
+	margin-left: 0;
+	
+}
+
+.form {
+	margin-bottom: 15px;
+}
+
+#submit {
+    padding: 10px 20px;
+    background-color: #b13c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#submit:hover {
+	background-color: #382896;
+	transform: scale(1.05);
+}
+
+.googleLogIn {
+    margin-top: 20px;
+}
+
+#google {
+    padding: 10px 20px;
+    background-color: #b13c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#google:hover {
+	background-color: #382896;
+	transform: scale(1.05);
+}
+
+label {
+    
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form {
+    margin-top: 15px;
+    font-size: 0.9em;
+}
+
+.form a {
+    color: #245cb5;
+    text-decoration: none;
+}
+
+.form a:hover {
+    text-decoration: underline;
+}

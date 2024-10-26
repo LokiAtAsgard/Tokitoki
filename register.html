@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="eng">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tokitoki</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://fonts.googlelapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link href="STYLES.CSS" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <script type="module" src="register.js" defer></script>
+
+</head>
+
+<body>
+    <div class="content">
+    <div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <form>
+        <h4>Welcome to Tokitoki!</h4>
+        <h3>Create Account</h3>
+        <div>
+        <label for="username">Username: </label>
+        <input type="email" placeholder="Email or Phone" id="email" required>
+        </div>
+        <div>
+        <label for="password">Password:</label>
+        <input type="password" placeholder="Password" id="password" required> </input>
+        </div>
+        <div class="logIn">
+        <button id="submit" type="submit">Create Account</button>
+        </div>
+        <div class="googleLogIn">
+        <button id="google" onclick="signInWithGoogle()">Sign in with Google</button>
+        </div>
+        <div class="social">
+        </div>
+
+        <div class="form">
+            <p>Have an account?
+                <span><a href="index.html">Login Here</a></span>
+            </p>
+        </div>
+    </form>
+    </div>
+</body>
+</html>

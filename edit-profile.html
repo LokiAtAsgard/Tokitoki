@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="STYLES.css">
+    <script type="module" src="edit-profile.js" defer></script>
+</head>
+<body>
+    <div class="content">
+        <h3>Edit Your Profile</h3>
+        <form id="profile-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Enter your username" required>
+            
+            <label for="bio">Bio:</label>
+            <textarea id="bio" placeholder="Tell us about yourself"></textarea>
+
+            <label for="photoURL">Profile Picture URL:</label>
+            <input type="text" id="photoURL" placeholder="Image URL for profile picture">
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</body>
+</html>
