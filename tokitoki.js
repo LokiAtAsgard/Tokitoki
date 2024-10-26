@@ -1,5 +1,3 @@
-
-
 // Import Firebase dependencies
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
@@ -15,6 +13,7 @@ const firebaseConfig = {
     appId: "1:41928173902:web:54ca9cc87f3fa8c3b0961f"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -56,9 +55,9 @@ function displayMessage(message) {
 
     // Align the message depending on the sender
     if (message.senderId === currentUser.uid) {
-        messageElement.classList.add("right");
+        messageElement.classList.add("right");  // Right align for the current user's messages
     } else {
-        messageElement.classList.add("left");
+        messageElement.classList.add("left");   // Left align for other users' messages
     }
 
     // Display sender's name above the message text
