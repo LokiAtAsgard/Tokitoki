@@ -1,7 +1,6 @@
-// Import Firebase dependencies
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, doc, query, orderBy, onSnapshot, serverTimestamp, where, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, doc, onSnapshot, addDoc, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -28,21 +27,24 @@ const searchResults = document.getElementById("search-results");
 
 let selectedUserId = null; // Variable to store the selected user's ID
 
-// Monitor Auth State
+// Check if user is authenticated
 onAuthStateChanged(auth, (user) => {
-    if (user) {
-        loadChatMessages(user.uid); // Load chat messages specific to user
-        messageForm.addEventListener("submit", (event) => sendMessage(event, user));
-    } else {
-        alert("Please sign in to use the chat.");
-        window.location.href = "index.html"; // Redirect to login if not signed in
+    if (!user) {
+        window.location.href = "index.html"; // Redirect to login if user is not signed in
     }
+});
+
+// Add Settings button functionality
+document.getElementById("settings-button").addEventListener("click", () => {
+    window.location.href = "settings.html";
 });
 
 // Load Chat Messages
 function loadChatMessages(userId) {
     const q = query(
         collection(db, "chats"),
+        where("recipientId", "in", [userId, selectedUserId]),
+        where("senderId", "in", [userId, selectedUserId]),
         orderBy("timestamp", "asc")
     );
 
@@ -50,9 +52,7 @@ function loadChatMessages(userId) {
         chatLog.innerHTML = "";  // Clear chat log
         querySnapshot.forEach((doc) => {
             const message = doc.data();
-            if (message.senderId === userId || message.recipientId === userId) {
-                displayMessage(message);
-            }
+            displayMessage(message);
         });
     });
 }
@@ -105,34 +105,60 @@ async function sendMessage(event, user) {
     }
 }
 
-// User Search Functionality
-searchButton.addEventListener("click", async () => {
+// Search Functionality
+searchButton.addEventListener("click", performUserSearch);
+
+async function performUserSearch() {
     const searchQuery = userSearchInput.value.trim();
+    searchResults.innerHTML = ""; // Clear previous results
 
     if (searchQuery) {
-        const profilesRef = collection(db, "profiles");
-        const q = query(profilesRef, where("username", ">=", searchQuery), where("username", "<=", searchQuery + "\uf8ff"));
+        try {
+            const profilesRef = collection(db, "profiles");
+            const q = query(profilesRef, where("username", ">=", searchQuery), where("username", "<=", searchQuery + "\uf8ff"));
 
-        const querySnapshot = await getDocs(q);
-        searchResults.innerHTML = ""; // Clear previous results
+            const querySnapshot = await getDocs(q);
+            
+            if (querySnapshot.empty) {
+                searchResults.innerHTML = "<p>No users found</p>";
+            } else {
+                querySnapshot.forEach((doc) => {
+                    const profile = doc.data();
+                    const resultItem = document.createElement("div");
+                    resultItem.classList.add("search-result-item");
 
-        querySnapshot.forEach((doc) => {
-            const profile = doc.data();
-            const resultItem = document.createElement("div");
-            resultItem.classList.add("search-result");
-            resultItem.textContent = profile.username;
-            resultItem.addEventListener("click", () => initiateChatWithUser(doc.id, profile.username));
-            searchResults.appendChild(resultItem);
-        });
+                    // Display profile photo
+                    const profileImg = document.createElement("img");
+                    profileImg.src = profile.photoURL || "default-icon.png";
+                    profileImg.alt = profile.username;
+                    
+                    // Display username
+                    const username = document.createElement("span");
+                    username.classList.add("username");
+                    username.textContent = profile.username;
+
+                    resultItem.appendChild(profileImg);
+                    resultItem.appendChild(username);
+                    searchResults.appendChild(resultItem);
+
+                    // Click event to initiate chat
+                    resultItem.addEventListener("click", () => {
+                        initiateChatWithUser(doc.id, profile.username, profile.photoURL);
+                    });
+                });
+            }
+        } catch (error) {
+            console.error("Error performing search:", error);
+            searchResults.innerHTML = "<p>Error searching users. Please try again.</p>";
+        }
     } else {
-        searchResults.innerHTML = ""; // Clear results if search is empty
+        searchResults.innerHTML = "<p>Please enter a search term.</p>";
     }
-});
+}
 
 // Select a User to Chat With
-function initiateChatWithUser(userId, username) {
+function initiateChatWithUser(userId, username, photoURL) {
     selectedUserId = userId; // Store the selected user's ID
-    alert(`Initiating chat with ${username}`);
     chatLog.innerHTML = ""; // Clear chat log for new conversation
-    loadChatMessages(auth.currentUser.uid); // Reload chat messages for current user
+    loadChatMessages(auth.currentUser.uid); // Load messages with the selected user
 }
